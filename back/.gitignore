@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+
+# Logs
+*.log
+
+# Go build artifacts
+bin/
+build/
+dist/
+*.out
+
+# Go tools
+cover.out
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+*.local.yml
+
+# Env files
+.env
+.env.*
+.env.local
+
+# Database / Migrations temp
+tmp/
+
+

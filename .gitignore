@@ -12,29 +12,12 @@
 *.env.development.local
 *.env.test.local
 *.env.production.local
-back/.env
-front/.env
 
 # Logs
 *.log
 logs/
 
-# Go (back/)
-back/bin/
-back/tmp/
-back/coverage/
-*.out
 *.test
-
-# Node/Expo (front/)
-front/node_modules/
-front/.expo/
-front/.expo-shared/
-front/dist/
-front/build/
-front/.next/
-front/.turbo/
-front/coverage/
 
 # OS junk
 Thumbs.db

@@ -1,0 +1,121 @@
+openapi: 3.1.0
+info:
+  title: Basetie API
+  version: 0.1.0
+  description: |
+    Basetie v1 API 스펙 (MVP)
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+  /v1/auth/oauth/google:
+    post:
+      summary: Google OAuth login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_token:
+                  type: string
+              required: [id_token]
+      responses:
+        '200':
+          description: JWT issued
+  /v1/auth/oauth/apple:
+    post:
+      summary: Apple OAuth login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_token:
+                  type: string
+              required: [id_token]
+      responses:
+        '200':
+          description: JWT issued
+  /v1/auth/refresh:
+    post:
+      summary: Refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh:
+                  type: string
+              required: [refresh]
+      responses:
+        '200':
+          description: New token pair
+  /v1/me:
+    get:
+      summary: Get my profile
+      responses:
+        '200': { description: OK }
+  /v1/profile:
+    patch:
+      summary: Update profile
+      responses:
+        '200': { description: OK }
+  /v1/profile/phone:
+    post:
+      summary: Set phone number (unique)
+      responses:
+        '200': { description: OK }
+  /v1/teams:
+    get:
+      summary: List teams
+      responses:
+        '200': { description: OK }
+  /v1/games:
+    get:
+      summary: List games by optional team/date
+      parameters:
+        - in: query
+          name: team_id
+          schema: { type: string }
+        - in: query
+          name: date
+          schema: { type: string, example: '2025-08-29' }
+      responses:
+        '200': { description: OK }
+    get:
+      summary: Healthcheck
+      operationId: healthz
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /readyz:
+    get:
+      summary: Readiness check
+      operationId: readyz
+      responses:
+        '200':
+          description: Ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ready
+
+

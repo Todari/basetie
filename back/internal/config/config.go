@@ -1,0 +1,55 @@
+package config
+
+import (
+	"fmt"
+	"os"
+)
+
+type Config struct {
+    Port        string
+    DatabaseURL string
+    JWTSecret   string
+    AccessTokenTTLMinutes  int
+    RefreshTokenTTLMinutes int
+    GoogleClientID string
+    AppleBundleID  string
+}
+
+func Load() (*Config, error) {
+    cfg := &Config{
+        Port:        getEnv("PORT", "8080"),
+        DatabaseURL: os.Getenv("DATABASE_URL"),
+        JWTSecret:   os.Getenv("JWT_SECRET"),
+        AccessTokenTTLMinutes:  getEnvInt("ACCESS_TOKEN_TTL_MINUTES", 15),
+        RefreshTokenTTLMinutes: getEnvInt("REFRESH_TOKEN_TTL_MINUTES", 43200), // 30 days
+        GoogleClientID: os.Getenv("GOOGLE_CLIENT_ID"),
+        AppleBundleID:  os.Getenv("APPLE_BUNDLE_ID"),
+    }
+    if cfg.DatabaseURL == "" {
+        return nil, fmt.Errorf("DATABASE_URL is required")
+    }
+    if cfg.JWTSecret == "" {
+        return nil, fmt.Errorf("JWT_SECRET is required")
+    }
+    return cfg, nil
+}
+
+func getEnv(key, def string) string {
+    if v := os.Getenv(key); v != "" {
+        return v
+    }
+    return def
+}
+
+func getEnvInt(key string, def int) int {
+    if v := os.Getenv(key); v != "" {
+        var n int
+        _, err := fmt.Sscanf(v, "%d", &n)
+        if err == nil {
+            return n
+        }
+    }
+    return def
+}
+
+

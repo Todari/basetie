@@ -56,6 +56,9 @@ func main() {
     profileHandler := handlers.NewProfileHandler(userRepo)
     metaRepo := repo.NewMetaRepository(gormDB)
     metaHandler := handlers.NewMetaHandler(metaRepo)
+    listingRepo := repo.NewListingRepository(gormDB)
+    listingSvc := services.NewListingService(cfg, listingRepo)
+    listingHandler := handlers.NewListingsHandler(listingRepo, listingSvc)
 
     v1 := router.Group("/v1")
     {
@@ -69,6 +72,12 @@ func main() {
 
         v1.GET("/teams", metaHandler.Teams)
         v1.GET("/games", metaHandler.Games)
+
+        v1.POST("/listings", mw.RequireAuth(cfg), listingHandler.Create)
+        v1.GET("/listings", listingHandler.List)
+        v1.GET("/listings/:id", listingHandler.Get)
+        v1.PATCH("/listings/:id/cancel", mw.RequireAuth(cfg), listingHandler.Cancel)
+        v1.GET("/my/listings", mw.RequireAuth(cfg), listingHandler.MyListings)
     }
 
     srv := &http.Server{

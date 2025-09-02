@@ -13,6 +13,7 @@ type Config struct {
     RefreshTokenTTLMinutes int
     GoogleClientID string
     AppleBundleID  string
+    MonthlyListingLimit int
 }
 
 func Load() (*Config, error) {
@@ -24,6 +25,7 @@ func Load() (*Config, error) {
         RefreshTokenTTLMinutes: getEnvInt("REFRESH_TOKEN_TTL_MINUTES", 43200), // 30 days
         GoogleClientID: os.Getenv("GOOGLE_CLIENT_ID"),
         AppleBundleID:  os.Getenv("APPLE_BUNDLE_ID"),
+        MonthlyListingLimit: getEnvInt("MONTHLY_LISTING_LIMIT", 8),
     }
     if cfg.DatabaseURL == "" {
         return nil, fmt.Errorf("DATABASE_URL is required")

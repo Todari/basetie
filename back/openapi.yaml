@@ -88,6 +88,74 @@ paths:
           schema: { type: string, example: '2025-08-29' }
       responses:
         '200': { description: OK }
+  /v1/listings:
+    get:
+      summary: List listings
+      parameters:
+        - in: query
+          name: team_id
+          schema: { type: string }
+        - in: query
+          name: game_id
+          schema: { type: string }
+        - in: query
+          name: seller_id
+          schema: { type: string }
+        - in: query
+          name: status
+          schema: { type: string, enum: [listed, reserved, completed, canceled] }
+        - in: query
+          name: date
+          schema: { type: string, example: '2025-08-29' }
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Create a listing (auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                game_id: { type: integer }
+                team_id: { type: integer }
+                section: { type: string }
+                row: { type: string }
+                seat_label: { type: string }
+                price: { type: number }
+                note: { type: string }
+              required: [game_id, team_id, section, row, seat_label, price]
+      responses:
+        '200': { description: Created }
+        '403': { description: Monthly limit reached }
+  /v1/listings/{id}:
+    get:
+      summary: Get listing by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '404': { description: Not found }
+  /v1/listings/{id}/cancel:
+    patch:
+      summary: Cancel listing (seller only)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '403': { description: Forbidden }
+  /v1/my/listings:
+    get:
+      summary: List my listings
+      responses:
+        '200': { description: OK }
     get:
       summary: Healthcheck
       operationId: healthz

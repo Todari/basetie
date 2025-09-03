@@ -42,10 +42,10 @@ func (s *KBOETLService) ensureStadium(ctx context.Context, name string) (*int64,
 func (s *KBOETLService) ETLMonth(ctx context.Context, year int, month int) error {
     start := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
     end := start.AddDate(0, 1, 0)
-    type row struct{ GameDate time.Time; GameID string; HomeName string; AwayName string; Stadium *string }
+    type row struct{ GameDate time.Time; GameID string; HomeName string; AwayName string; Stadium *string; Status *string; KboStart *string }
     var rows []row
     if err := s.db.WithContext(ctx).Raw(
-        `SELECT game_date, game_id, home_team_name, away_team_name, NULL::text as stadium FROM kbo_games WHERE game_date >= ? AND game_date < ?`, start, end,
+        `SELECT game_date, game_id, home_team_name, away_team_name, stadium_name as stadium, status, to_char(start_time, 'HH24:MI:SS') as kbo_start FROM kbo_games WHERE game_date >= ? AND game_date < ?`, start, end,
     ).Scan(&rows).Error; err != nil { return err }
     for _, r := range rows {
         homeID, err := s.mapTeamID(ctx, r.HomeName)
@@ -54,16 +54,30 @@ func (s *KBOETLService) ETLMonth(ctx context.Context, year int, month int) error
         if err != nil { continue }
         var stadiumID *int64
         if r.Stadium != nil { stadiumID, _ = s.ensureStadium(ctx, *r.Stadium) }
-        startTime := time.Date(r.GameDate.Year(), r.GameDate.Month(), r.GameDate.Day(), 18, 30, 0, 0, time.UTC) // 기본 18:30 (실데이터 없을 때)
-        if err := s.db.WithContext(ctx).Exec(
-            `INSERT INTO games(home_team_id, away_team_id, start_time, stadium, created_at) 
-             VALUES(?,?,?,?, NOW())
-             ON CONFLICT (home_team_id, away_team_id, start_time) DO NOTHING`,
-            homeID, awayID, startTime, "", // 기존 games에 stadium(text) 존재하므로 공란 유지
-        ).Error; err != nil { return err }
-        if stadiumID != nil {
-            _ = s.db.WithContext(ctx).Exec(`UPDATE games SET stadium_id = ? WHERE home_team_id=? AND away_team_id=? AND start_time=?`, stadiumID, homeID, awayID, startTime).Error
+        // start time: prefer kbo_games.start_time
+        startH, startM, startS := 18, 30, 0
+        if r.KboStart != nil && *r.KboStart != "" {
+            if t, err := time.Parse("15:04:05", *r.KboStart); err == nil {
+                startH, startM, startS = t.Hour(), t.Minute(), t.Second()
+            } else if t, err := time.Parse("15:04", *r.KboStart); err == nil {
+                startH, startM, startS = t.Hour(), t.Minute(), 0
+            }
         }
+        startTime := time.Date(r.GameDate.Year(), r.GameDate.Month(), r.GameDate.Day(), startH, startM, startS, 0, time.UTC)
+        status := "scheduled"
+        if r.Status != nil && *r.Status != "" { status = *r.Status }
+
+        if err := s.db.WithContext(ctx).Exec(
+            `INSERT INTO games(game_source_id, home_team_id, away_team_id, start_time, status, stadium_id, created_at)
+             VALUES(?,?,?,?,?,?, NOW())
+             ON CONFLICT (game_source_id) DO UPDATE SET
+                home_team_id=excluded.home_team_id,
+                away_team_id=excluded.away_team_id,
+                start_time=excluded.start_time,
+                status=excluded.status,
+                stadium_id=excluded.stadium_id`,
+            r.GameID, homeID, awayID, startTime, status, stadiumID,
+        ).Error; err != nil { return err }
     }
     return nil
 }

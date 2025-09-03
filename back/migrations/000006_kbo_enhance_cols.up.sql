@@ -1,5 +1,0 @@
-ALTER TABLE kbo_games ADD COLUMN IF NOT EXISTS status TEXT;
-ALTER TABLE kbo_games ADD COLUMN IF NOT EXISTS stadium_name TEXT;
-ALTER TABLE kbo_games ADD COLUMN IF NOT EXISTS start_time TIME;
-
-

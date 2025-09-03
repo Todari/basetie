@@ -1,17 +1,23 @@
 export const colors = {
-  primary: "#1A56A1",
-  primaryHover: "#174B8E",
-  primaryPress: "#123E77",
-  gray50: "#F9FAFB",
-  gray100: "#F3F4F6",
-  gray200: "#E5E7EB",
-  gray300: "#D1D5DB",
-  gray400: "#9CA3AF",
-  gray500: "#6B7280",
-  gray600: "#4B5563",
-  gray700: "#374151",
-  gray800: "#1F2937",
-  gray900: "#111827",
+  primary50: "#e3f2fa",
+  primary100 : "#bbddf5",
+  primary200: "#91c8ee",
+  primary300: "#68b3e7",
+  primary400: "#4aa3e3",
+  primary500: "#2d94df",
+  primary600: "#2686d2",
+  primary700: "#1c75c0",
+  primary800: "#1564ae",
+  primary900: "#06478f",
+  gray50: "#F3F4F6",
+  gray100: "#E3E3E7",
+  gray200: "#D9DADC",
+  gray300: "#C7C8CA",
+  gray400: "#9FA0A2",
+  gray500: "#77787A",
+  gray600: "#4F5052",
+  gray700: "#36383D",
+  gray800: "#27282A",
   white: "#FFFFFF",
   black: "#000000",
   success: "#16A34A",
@@ -26,19 +32,38 @@ export const z = { base: 0, overlay: 1000, modal: 2000 } as const;
 
 export const theme = {
   light: {
-    bg: "#FFFFFF90",
-    fg: colors.gray900,
-    card: "#FFFFFFB3",
-    primary: colors.primary,
-    muted: "#F3F4F680",
+    bg: colors.white,
+    fg: colors.gray800,
+    card: colors.gray50,
+    primary: colors.primary800,
+    muted: colors.gray300,
+    divider: colors.gray200,
   },
   dark: {
-    bg: "#0B1220CC",
+    bg: colors.gray800,
     fg: colors.gray50,
-    card: "#0F172ABD",
-    primary: colors.primary,
-    muted: "#11182780",
+    card: colors.gray800,
+    primary: colors.primary800,
+    muted: colors.gray600,
+    divider: colors.gray700,
   },
+};
+
+export const typography = {
+  display: { fontSize: 24, lineHeight: 36, fontWeight: "800" as const },
+  title: { fontSize: 20, lineHeight: 30, fontWeight: "700" as const },
+  body: { fontSize: 16, lineHeight: 24, fontWeight: "500" as const },
+  caption: { fontSize: 12, lineHeight: 18, fontWeight: "500" as const },
+};
+
+export const shadow = {
+  card: {
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
+  } as const,
 };
 
 

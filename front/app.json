@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "com.todari.basetie",
     "name": "basetie",
     "slug": "basetie",
     "version": "0.1.0",

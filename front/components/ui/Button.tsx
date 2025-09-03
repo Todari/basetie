@@ -1,28 +1,56 @@
-import { Pressable, Text, ViewStyle } from "react-native";
-import { colors, radii } from "../../theme/design-tokens";
+import { Pressable, ViewStyle } from "react-native";
+import { colors, radii, sizes } from "../../theme/design-tokens";
+import { Text } from "./Text";
+
+type Variant = "primary" | "secondary" | "ghost" | "outline";
+type Size = "sm" | "md" | "lg";
 
 type Props = {
-  glass?: boolean;
   title: string;
   onPress?: () => void;
   style?: ViewStyle;
+  variant?: Variant;
+  size?: Size;
+  fullWidth?: boolean;
+  loading?: boolean;
+  glass?: boolean;
 };
 
-export function Button({ glass, title, onPress, style }: Props) {
+export function Button({ title, onPress, style, variant = "primary", size = "md", fullWidth, loading, glass }: Props) {
+  const height = sizes[size];
+  const stylesByVariant: Record<Variant, ViewStyle> = {
+    primary: { backgroundColor: colors.primary800, borderWidth: 0 },
+    secondary: { backgroundColor: colors.gray700, borderWidth: 0 },
+    ghost: { backgroundColor: "transparent", borderWidth: 0 },
+    outline: { backgroundColor: "transparent", borderWidth: 1, borderColor: colors.primary800 },
+  } as const;
+  const isGlass = glass === true;
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [{
-        borderRadius: radii.md,
-        backgroundColor: glass ? "transparent" : colors.primary,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderWidth: glass ? 1 : 0,
-        borderColor: colors.primary,
-        opacity: pressed ? 0.85 : 1,
-      }, style]}
+      style={({ pressed }) => [
+        {
+          borderRadius: radii.md,
+          paddingHorizontal: 16,
+          height,
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: pressed ? 0.85 : 1,
+          ...(isGlass
+            ? ({ backgroundColor: "transparent", borderWidth: 1, borderColor: colors.primary800 } as ViewStyle)
+            : (stylesByVariant[variant] as ViewStyle)),
+          width: fullWidth ? "100%" : undefined,
+        },
+        style,
+      ]}
     >
-      <Text style={{ color: glass ? colors.primary : colors.white, fontWeight: "600" }}>{title}</Text>
+      <Text
+        variant="body"
+        weight="semibold"
+        color={isGlass ? "primary" : variant === "primary" || variant === "secondary" ? "inherit" : "primary"}
+      >
+        {title}
+      </Text>
     </Pressable>
   );
 }

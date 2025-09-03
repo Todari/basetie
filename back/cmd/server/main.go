@@ -60,6 +60,32 @@ func main() {
     listingSvc := services.NewListingService(cfg, listingRepo)
     listingHandler := handlers.NewListingsHandler(listingRepo, listingSvc)
 
+    kboSync := services.NewKBOSyncService(gormDB)
+    kboETL := services.NewKBOETLService(gormDB)
+    adminKBO := handlers.NewAdminKBOHandler(kboSync, kboETL)
+
+    if cfg.KBOSyncEnabled {
+        go func() {
+            ticker := time.NewTicker(time.Duration(cfg.KBOSyncEveryHours) * time.Hour)
+            defer ticker.Stop()
+            season := cfg.KBOSyncSeason
+            for {
+                // 기본: 현재 월, 옵션: months ahead 반복
+                now := time.Now()
+                months := 1
+                if cfg.KBOSyncMonthsAhead > 0 { months += cfg.KBOSyncMonthsAhead }
+                for i := 0; i < months; i++ {
+                    dt := now.AddDate(0, i, 0)
+                    month := dt.Format("01")
+                    if season == "" { season = dt.Format("2006") }
+                    _ = kboSync.SyncMonth(context.Background(), season, month)
+                    _ = kboETL.ETLMonth(context.Background(), dt.Year(), int(dt.Month()))
+                }
+                <-ticker.C
+            }
+        }()
+    }
+
     v1 := router.Group("/v1")
     {
         v1.POST("/auth/oauth/google", authHandler.OAuthGoogle)
@@ -78,6 +104,12 @@ func main() {
         v1.GET("/listings/:id", listingHandler.Get)
         v1.PATCH("/listings/:id/cancel", mw.RequireAuth(cfg), listingHandler.Cancel)
         v1.GET("/my/listings", mw.RequireAuth(cfg), listingHandler.MyListings)
+
+        admin := v1.Group("/admin")
+        {
+            admin.POST("/kbo/sync", adminKBO.Sync)
+            admin.POST("/kbo/etl", adminKBO.ETL)
+        }
     }
 
     srv := &http.Server{
@@ -96,7 +128,6 @@ func main() {
         }
     }()
 
-    // graceful shutdown
     quit := make(chan os.Signal, 1)
     signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
     <-quit
@@ -107,7 +138,7 @@ func main() {
         logg.Error("server shutdown error", logger.Error(err))
     }
 
-    _ = gormDB // keep reference for future use
+    _ = gormDB
 }
 
 

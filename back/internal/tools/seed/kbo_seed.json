@@ -1,0 +1,191 @@
+{
+  "teams": [
+    {
+      "name": "두산 베어스",
+      "short_code": "두산"
+    },
+    {
+      "name": "LG 트윈스",
+      "short_code": "LG"
+    },
+    {
+      "name": "롯데 자이언츠",
+      "short_code": "롯데"
+    },
+    {
+      "name": "SSG 랜더스",
+      "short_code": "SSG"
+    },
+    {
+      "name": "키움 히어로즈",
+      "short_code": "키움"
+    },
+    {
+      "name": "한화 이글스",
+      "short_code": "한화"
+    },
+    {
+      "name": "KIA 타이거즈",
+      "short_code": "KIA"
+    },
+    {
+      "name": "삼성 라이온즈",
+      "short_code": "삼성"
+    },
+    {
+      "name": "NC 다이노스",
+      "short_code": "NC"
+    },
+    {
+      "name": "KT 위즈",
+      "short_code": "KT"
+    }
+  ],
+  "stadiums": [
+    {
+      "name": "잠실",
+      "city": "서울",
+      "aliases": [
+        "잠실",
+        "잠실야구장",
+        "종합운동장"
+      ]
+    },
+    {
+      "name": "고척",
+      "city": "서울",
+      "aliases": [
+        "고척",
+        "고척스카이돔",
+        "고척돔"
+      ]
+    },
+    {
+      "name": "문학",
+      "city": "인천",
+      "aliases": [
+        "인천",
+        "문학",
+        "인천 구장",
+        "문학야구장",
+        "문학경기장"
+      ]
+    },
+    {
+      "name": "대전",
+      "city": "대전",
+      "aliases": [
+        "대전",
+        "이글스파크",
+        "한화생명 이글스파크"
+      ]
+    },
+    {
+      "name": "광주",
+      "city": "광주",
+      "aliases": [
+        "광주",
+        "챔피언스필드"
+      ]
+    },
+    {
+      "name": "대구",
+      "city": "대구",
+      "aliases": [
+        "대구",
+        "라이온즈파크",
+        "라팍"
+      ]
+    },
+    {
+      "name": "사직",
+      "city": "부산",
+      "aliases": [
+        "사직",
+        "사직야구장",
+        "사직구장",
+        "사직야구경기장"
+      ]
+    },
+    {
+      "name": "창원",
+      "city": "창원",
+      "aliases": [
+        "창원",
+        "NC파크",
+        "NC구장",
+        "NC야구장",
+        "엔씨파크",
+        "엔팍"
+      ]
+    },
+    {
+      "name": "수원",
+      "city": "수원",
+      "aliases": [
+        "수원",
+        "케이티위즈파크",
+        "수원구장",
+        "수원야구장",
+        "위즈파크",
+        "위팍"
+      ]
+    },
+    {
+      "name": "울산",
+      "city": "울산",
+      "aliases": [
+        "울산"
+      ]
+    },
+    {
+      "name": "포항",
+      "city": "포항",
+      "aliases": [
+        "포항"
+      ]
+    }
+  ],
+  "team_aliases": [
+    {
+      "team_short_code": "두산",
+      "alias": "두산"
+    },
+    {
+      "team_short_code": "LG",
+      "alias": "LG"
+    },
+    {
+      "team_short_code": "롯데",
+      "alias": "롯데"
+    },
+    {
+      "team_short_code": "SSG",
+      "alias": "SSG"
+    },
+    {
+      "team_short_code": "키움",
+      "alias": "키움"
+    },
+    {
+      "team_short_code": "한화",
+      "alias": "한화"
+    },
+    {
+      "team_short_code": "KIA",
+      "alias": "KIA"
+    },
+    {
+      "team_short_code": "삼성",
+      "alias": "삼성"
+    },
+    {
+      "team_short_code": "NC",
+      "alias": "NC"
+    },
+    {
+      "team_short_code": "KT",
+      "alias": "KT"
+    }
+  ]
+}

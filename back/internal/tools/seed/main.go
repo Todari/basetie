@@ -1,9 +1,14 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/subosito/gotenv"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/Todari/basetie/internal/config"
 	"github.com/Todari/basetie/internal/db"
@@ -18,26 +23,96 @@ func main() {
     if err != nil { panic(err) }
     defer sqlDB.Close()
 
-    // Teams
-    var count int64
-    if err := gormDB.Model(&meta.Team{}).Count(&count).Error; err != nil { panic(err) }
-    if count == 0 {
-        teams := []meta.Team{
-            {Name: "Doosan Bears", ShortCode: "DOO"},
-            {Name: "LG Twins", ShortCode: "LGT"},
-            {Name: "Samsung Lions", ShortCode: "SAM"},
-            {Name: "KIA Tigers", ShortCode: "KIA"},
-        }
-        if err := gormDB.Create(&teams).Error; err != nil { panic(err) }
+    type jsonSeed struct {
+        Teams []struct {
+            Name      string `json:"name"`
+            ShortCode string `json:"short_code"`
+        } `json:"teams"`
+        Stadiums []struct {
+            Name    string   `json:"name"`
+            City    string   `json:"city"`
+            Aliases []string `json:"aliases"`
+        } `json:"stadiums"`
+        TeamAliases []struct {
+            TeamShortCode string `json:"team_short_code"`
+            Alias         string `json:"alias"`
+        } `json:"team_aliases"`
     }
 
-    // Games (sample next 2 fixtures)
+    seedPath := "internal/tools/seed/kbo_seed.json"
+    if b, err := os.ReadFile(seedPath); err == nil {
+        var s jsonSeed
+        if err := json.Unmarshal(b, &s); err != nil {
+            panic(fmt.Errorf("seed json parse error: %w", err))
+        }
+
+        // Replace data transactionally
+        if err := gormDB.Transaction(func(tx *gorm.DB) error {
+            // Truncate order: aliases -> stadiums -> teams (aliases depends on teams)
+            if err := tx.Exec("TRUNCATE TABLE team_aliases RESTART IDENTITY CASCADE").Error; err != nil { return err }
+            if err := tx.Exec("TRUNCATE TABLE stadiums RESTART IDENTITY CASCADE").Error; err != nil { return err }
+            // teams referenced by other tables; safe because CASCADE above handles dependent rows
+            if err := tx.Exec("TRUNCATE TABLE teams RESTART IDENTITY CASCADE").Error; err != nil { return err }
+
+            // Insert teams
+            if len(s.Teams) > 0 {
+                toCreate := make([]meta.Team, 0, len(s.Teams))
+                for _, t := range s.Teams {
+                    if t.Name == "" || t.ShortCode == "" { continue }
+                    toCreate = append(toCreate, meta.Team{Name: t.Name, ShortCode: t.ShortCode})
+                }
+                if len(toCreate) > 0 {
+                    if err := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&toCreate).Error; err != nil {
+                        return err
+                    }
+                }
+            }
+
+            // Insert stadiums
+            if len(s.Stadiums) > 0 {
+                toCreate := make([]meta.Stadium, 0, len(s.Stadiums))
+                for _, st := range s.Stadiums {
+                    if st.Name == "" { continue }
+                    aliasBytes, _ := json.Marshal(st.Aliases)
+                    toCreate = append(toCreate, meta.Stadium{Name: st.Name, City: st.City, AliasJSON: aliasBytes})
+                }
+                if len(toCreate) > 0 {
+                    if err := tx.Create(&toCreate).Error; err != nil { return err }
+                }
+            }
+
+            // Insert team_aliases
+            if len(s.TeamAliases) > 0 {
+                var teams []meta.Team
+                if err := tx.Find(&teams).Error; err != nil { return err }
+                scToID := map[string]int64{}
+                for _, t := range teams { scToID[t.ShortCode] = t.ID }
+
+                toCreate := make([]meta.TeamAlias, 0, len(s.TeamAliases))
+                for _, a := range s.TeamAliases {
+                    if a.Alias == "" { continue }
+                    id := scToID[a.TeamShortCode]
+                    if id == 0 { continue }
+                    toCreate = append(toCreate, meta.TeamAlias{TeamID: id, Alias: a.Alias})
+                }
+                if len(toCreate) > 0 {
+                    if err := tx.Create(&toCreate).Error; err != nil { return err }
+                }
+            }
+            return nil
+        }); err != nil {
+            panic(err)
+        }
+    }
+
+    // Keep sample games only when empty
+    var count int64
     if err := gormDB.Model(&meta.Game{}).Count(&count).Error; err != nil { panic(err) }
     if count == 0 {
         now := time.Now()
         g := []meta.Game{
-            {HomeTeamID: 1, AwayTeamID: 2, StartTime: now.Add(24 * time.Hour), Stadium: "Jamsil"},
-            {HomeTeamID: 3, AwayTeamID: 4, StartTime: now.Add(48 * time.Hour), Stadium: "Daegu"},
+            {HomeTeamID: 1, AwayTeamID: 2, StartTime: now.Add(24 * time.Hour), Stadium: "잠실"},
+            {HomeTeamID: 3, AwayTeamID: 4, StartTime: now.Add(48 * time.Hour), Stadium: "대구"},
         }
         if err := gormDB.Create(&g).Error; err != nil { panic(err) }
     }

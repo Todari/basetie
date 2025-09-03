@@ -14,6 +14,10 @@ type Config struct {
     GoogleClientID string
     AppleBundleID  string
     MonthlyListingLimit int
+    KBOSyncEnabled bool
+    KBOSyncEveryHours int
+    KBOSyncSeason string
+    KBOSyncMonthsAhead int
 }
 
 func Load() (*Config, error) {
@@ -26,6 +30,10 @@ func Load() (*Config, error) {
         GoogleClientID: os.Getenv("GOOGLE_CLIENT_ID"),
         AppleBundleID:  os.Getenv("APPLE_BUNDLE_ID"),
         MonthlyListingLimit: getEnvInt("MONTHLY_LISTING_LIMIT", 8),
+        KBOSyncEnabled: getEnvBool("KBO_SYNC_ENABLED", false),
+        KBOSyncEveryHours: getEnvInt("KBO_SYNC_EVERY_HOURS", 12),
+        KBOSyncSeason: os.Getenv("KBO_SYNC_SEASON"),
+        KBOSyncMonthsAhead: getEnvInt("KBO_SYNC_MONTHS_AHEAD", 0),
     }
     if cfg.DatabaseURL == "" {
         return nil, fmt.Errorf("DATABASE_URL is required")
@@ -50,6 +58,14 @@ func getEnvInt(key string, def int) int {
         if err == nil {
             return n
         }
+    }
+    return def
+}
+
+func getEnvBool(key string, def bool) bool {
+    if v := os.Getenv(key); v != "" {
+        if v == "1" || v == "true" || v == "TRUE" || v == "yes" { return true }
+        if v == "0" || v == "false" || v == "FALSE" || v == "no" { return false }
     }
     return def
 }

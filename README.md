@@ -11,8 +11,8 @@ KBO 야구 티켓 팬투팬 정가 양도 플랫폼(B2C/C2C). 신고/제재 중�
 1) Postgres 실행: `cd back && docker compose up -d`
 2) 마이그레이션: `make migrate-up`
 3) 시드: `JWT_SECRET=dev DATABASE_URL=postgres://postgres:postgres@localhost:55432/basetie?sslmode=disable go run ./internal/tools/seed`
-4) 서버: `PORT=8089 GOOGLE_CLIENT_ID=... APPLE_BUNDLE_ID=... JWT_SECRET=... go run ./cmd/server`
-5) health: `curl http://localhost:8089/healthz`
+4) 서버: `PORT=8090 GOOGLE_CLIENT_ID=... APPLE_BUNDLE_ID=... JWT_SECRET=... go run ./cmd/server`
+5) health: `curl http://localhost:8090/healthz`
 
 ## 주요 문서
 - 제품: `docs/PRD.md`

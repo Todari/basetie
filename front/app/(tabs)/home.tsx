@@ -17,7 +17,7 @@ export default function HomeTab() {
       <AppBar title="배스티" />
       <View style={{ padding: 16, gap: 12 }}>
         <SearchBar placeholder="팀, 날짜, 구장 검색" />
-        <PillTabs items={["하루 특가", "셀러 특가", "할인 기획전"]} value={"하루 특가"} onChange={() => {}} />
+        {/* <PillTabs items={["하루 특가", "셀러 특가", "할인 기획전"]} value={"하루 특가"} onChange={() => {}} /> */}
         <Section title="양도 중인 티켓">
           <Card>
             <Text>목데이터 프로모션 카드</Text>

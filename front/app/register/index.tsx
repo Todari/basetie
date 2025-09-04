@@ -1,13 +1,13 @@
-import { SafeAreaView, View, FlatList } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useMemo, useState } from "react";
-import { api } from "../../shared/api/client";
+import { SafeAreaView, View, TouchableOpacity } from "react-native";
+import { useRef, useState } from "react";
 import { useAuth } from "../../shared/store/auth";
 import { router } from "expo-router";
 import { AppBar } from "../../components/ui/AppBar";
 import { colors } from "../../theme/design-tokens";
 import { Text } from "../../components/ui/Text";
 import { Button } from "../../components/ui/Button";
+import { useGamesByDate } from "../../hooks/queries/useGamesByDate";
+import { CaretLeftIcon, CaretRightIcon } from "phosphor-react-native";
 
 type GameRow = {
   id: number;
@@ -20,124 +20,122 @@ type GameRow = {
   away_team_name: string;
 };
 
+
 export default function RegisterTab() {
   const [step, setStep] = useState(1);
-  const now = new Date();
+  const nowRef = useRef(new Date());
+  const now = nowRef.current;
   const defaultYear = now.getFullYear();
   const [year] = useState<number>(defaultYear);
   const [month, setMonth] = useState<number>(now.getMonth() + 1);
   const [day, setDay] = useState<number>(now.getDate());
-  const date = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-  const [games, setGames] = useState<GameRow[]>([]);
-  const [loading, setLoading] = useState(false);
+  const queryDate = `${year}년 ${String(month).padStart(2, "0")}월 ${String(day).padStart(2, "0")}일`;
   const [form, setForm] = useState({ game_id: "", team_id: "", section: "", row: "", seat_label: "", price: "", note: "" });
   const access = useAuth((s) => s.access);
-  const itemHeight = 44;
-  const wheelHeight = itemHeight * 5; // 항상 5개 아이템이 보이도록 고정
-  const overlayHPad = 16; // 강조 바 좌우 동일 패딩(두 컬럼 동일 길이)
+  const [calYear, setCalYear] = useState<number>(year);
+  const [calMonth, setCalMonth] = useState<number>(month);
 
-  // Wheel picker (center selection, snap)
-  const Wheel = ({ data, value, onChange }: { data: number[]; value: number; onChange: (v: number) => void }) => {
-    const initialIndex = Math.max(0, data.findIndex((d) => d === value));
-    return (
-      <View style={{ position: "relative", height: wheelHeight }}>
-        <FlatList
-          data={data}
-          keyExtractor={(v) => String(v)}
-          initialScrollIndex={initialIndex === -1 ? 0 : initialIndex}
-          getItemLayout={(_, index) => ({ length: itemHeight, offset: itemHeight * index, index })}
-          showsVerticalScrollIndicator={false}
-          snapToInterval={itemHeight}
-          decelerationRate="fast"
-          onMomentumScrollEnd={(e) => {
-            const offsetY = e.nativeEvent.contentOffset.y;
-            const idx = Math.round(offsetY / itemHeight);
-            const v = data[Math.min(Math.max(idx, 0), data.length - 1)];
-            if (v !== undefined) onChange(v);
-          }}
-          contentContainerStyle={{ paddingTop: (wheelHeight - itemHeight) / 2, paddingBottom: (wheelHeight - itemHeight) / 2 }}
-          renderItem={({ item }) => (
-            <View style={{ height: itemHeight, alignItems: "center", justifyContent: "center" }}>
-              <Text variant="body" color={item === value ? "primary" : "secondary"} weight={item === value ? "bold" : "normal"}>
-                {String(item).padStart(2, "0")}
-              </Text>
-            </View>
-          )}
-        />
-        {/* top/bottom fade to indicate scrollable */}
-        <LinearGradient
-          pointerEvents="none"
-          colors={["#FFFFFF", "#FFFFFF00"]}
-          style={{ position: "absolute", left: 0, right: 0, top: 0, height: (wheelHeight - itemHeight) / 2 }}
-        />
-        <LinearGradient
-          pointerEvents="none"
-          colors={["#FFFFFF00", "#FFFFFF"]}
-          style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: (wheelHeight - itemHeight) / 2 }}
-        />
-      </View>
-    );
-  };
+  // react-query: 특정 날짜 경기 목록 (버튼 클릭 시 fetch)
+  const { data: gamesResp, isFetching, refetch } = useGamesByDate(queryDate, false);
+
   return (
     <SafeAreaView style={{ backgroundColor: colors.white, height: "100%" }}>
       <AppBar canGoBack={router.canGoBack()} onBack={() => router.back()} title="" />
       <View style={{ padding: 16, gap: 12, flex: 1 }}>
         <View style={{ paddingHorizontal: 8 }}>
           <Text variant="display">경기 날짜를 선택해 주세요</Text>
-          <Text style={{ marginTop: 8, color: colors.gray500 }}>{date}</Text>
+          <Text style={{ marginTop: 8, color: colors.gray500 }}>{queryDate}</Text>
         </View>
 
-        <View style={{ flexDirection: "row", marginTop: 12, flex: 1, marginHorizontal: "auto" }}>
-          {/* 월 휠: 오늘 이후의 월만 */}
-          <View style={{ borderRadius: 12, paddingVertical: 8 , width: 128}}>
-            <Text style={{ textAlign: "center", fontWeight: "700", marginBottom: 8 }}>월</Text>
-            <Wheel
-              data={Array.from({ length: 12 - (now.getMonth() + 1) + 1 }, (_, i) => now.getMonth() + 1 + i)}
-              value={month}
-              onChange={(m) => {
-                setMonth(m);
-                const minDay = m === (now.getMonth() + 1) ? now.getDate() : 1;
-                if (day < minDay) setDay(minDay);
+        {/* 캘린더 */}
+        <View style={{ marginTop: 12, paddingHorizontal: 8 }}>
+          {/* 캘린더 헤더: 월 변경 */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <TouchableOpacity
+              onPress={() => {
+                const prev = new Date(calYear, calMonth - 2, 1);
+                const min = new Date(year, month - 1, 1);
+                if (prev < min) return;
+                setCalYear(prev.getFullYear());
+                setCalMonth(prev.getMonth() + 1);
               }}
-            />
+              style={{ padding: 8, opacity: (new Date(calYear, calMonth - 2, 1) < new Date(year, month - 1, 1)) ? 0.3 : 1 }}
+            >
+              <CaretLeftIcon size={16} color={colors.gray800} weight="bold" />
+            </TouchableOpacity>
+            <Text variant="title">{`${calYear}년 ${String(calMonth).padStart(2, "0")}월`}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                const next = new Date(calYear, calMonth, 1);
+                setCalYear(next.getFullYear());
+                setCalMonth(next.getMonth() + 1);
+              }}
+              style={{ padding: 8 }}
+            >
+              <CaretRightIcon size={16} color={colors.gray800} weight="bold" />
+            </TouchableOpacity>
           </View>
-
-          {/* 일 휠: 선택 월이 현재 월일 때 오늘 이후만 */}
-          <View style={{  borderRadius: 12, paddingVertical: 8 , width: 128}}>
-            <Text style={{ textAlign: "center", fontWeight: "700", marginBottom: 8 }}>일</Text>
-            <Wheel
-              data={(() => {
-                const last = new Date(year, month, 0).getDate();
-                const start = month === (now.getMonth() + 1) ? now.getDate() : 1;
-                return Array.from({ length: last - start + 1 }, (_, i) => start + i);
-              })()}
-              value={day}
-              onChange={setDay}
-            />
+          {/* 요일 헤더 */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 4 }}>
+            {["일","월","화","수","목","금","토"].map((w) => (
+              <View key={w} style={{ width: `${100/7}%`, alignItems: "center" }}><Text variant="caption" color="secondary">{w}</Text></View>
+            ))}
+          </View>
+          {/* 날짜 그리드 */}
+          <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            {(() => {
+              const first = new Date(calYear, calMonth - 1, 1);
+              const lastDay = new Date(calYear, calMonth, 0).getDate();
+              const offset = first.getDay();
+              const cells: Array<{ label: string; selectable: boolean; y: number; m: number; d: number }>=[];
+              for (let i=0;i<offset;i++) cells.push({ label: "", selectable: false, y: calYear, m: calMonth, d: 0 });
+              for (let d=1; d<=lastDay; d++) {
+                const cellDate = new Date(calYear, calMonth-1, d);
+                const selectable = cellDate >= new Date(year, month-1, now.getDate());
+                cells.push({ label: String(d), selectable, y: calYear, m: calMonth, d });
+              }
+              return cells.map((c, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  disabled={!c.selectable || !c.label}
+                  onPress={() => { if (c.d){ setMonth(c.m); setDay(c.d); setCalYear(c.y); setCalMonth(c.m); } }}
+                  style={{ 
+                    width: `${100/7}%`, 
+                    height: 44, 
+                    alignItems: "center", 
+                    justifyContent: "center", 
+                    opacity: c.selectable ? 1 : 0.3, 
+                    borderRadius: 16, 
+                    marginVertical: 4,
+                    backgroundColor: c.d===day && c.m===month && c.y===year ? colors.primary50 : "transparent",
+                  }}
+                >
+                  <Text 
+                    variant="body" 
+                    color={c.d===day && c.m===month && c.y===year ? "primary" : "secondary"} 
+                    weight={c.d===day && c.m===month && c.y===year ? "bold" : "normal"}
+                    style={{ 
+                      fontSize: 14,
+                      color: c.d===day && c.m===month && c.y===year ? colors.primary800 : colors.gray600
+                    }}
+                  >
+                    {c.label}
+                  </Text>
+                </TouchableOpacity>
+              ));
+            })()}
           </View>
         </View>
       </View>
       <View style={{ position: "absolute", padding: 16, paddingBottom: 48, bottom: 0, width: "100%" }}>
         <Button
-          title={loading ? "불러오는 중..." : "해당 날짜 경기 보기"}
+          title={isFetching ? "불러오는 중..." : "해당 날짜 경기 보기"}
           size="lg"
           onPress={async () => {
-            setLoading(true);
-            try {
-              const res = await api<{ games: GameRow[] }>(`/v1/games?date=${date}`);
-              // TODO: 다음 단계 화면로 이동 및 games 전달/상태 저장
-              setGames(res.games || []);
-              // 임시로 알림만 표시
-              if (!res.games || res.games.length === 0) {
-                alert("해당 날짜의 경기가 없습니다");
-              } else {
-                alert(`${res.games.length}개의 경기를 찾았습니다.`);
-              }
-            } catch (e) {
-              alert("게임 목록을 불러오지 못했습니다");
-            } finally {
-              setLoading(false);
-            }
+            const r = await refetch();
+            const gs = r.data?.games ?? [];
+            if (gs.length === 0) alert("해당 날짜의 경기가 없습니다");
+            else alert(`${gs.length}개의 경기를 찾았습니다.`);
           }}
         />
       </View>

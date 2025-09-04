@@ -2,7 +2,7 @@
   "teams": [
     {
       "name": "두산 베어스",
-      "short_code": "DO"
+      "short_code": "OB"
     },
     {
       "name": "LG 트윈스",
@@ -148,7 +148,7 @@
   ],
   "team_aliases": [
     {
-      "team_short_code": "DO",
+      "team_short_code": "OB",
       "alias": "두산"
     },
     {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/subosito/gotenv"
 	"gorm.io/gorm"
@@ -105,17 +104,7 @@ func main() {
         }
     }
 
-    // Keep sample games only when empty
-    var count int64
-    if err := gormDB.Model(&meta.Game{}).Count(&count).Error; err != nil { panic(err) }
-    if count == 0 {
-        now := time.Now()
-        g := []meta.Game{
-            {HomeTeamID: 1, AwayTeamID: 2, StartTime: now.Add(24 * time.Hour), Stadium: "잠실"},
-            {HomeTeamID: 3, AwayTeamID: 4, StartTime: now.Add(48 * time.Hour), Stadium: "대구"},
-        }
-        if err := gormDB.Create(&g).Error; err != nil { panic(err) }
-    }
+    // 샘플 게임 삽입은 스키마 변경 이후 제약과 충돌하므로 제거
 }
 
 

@@ -11,4 +11,3 @@ ALTER TABLE games ALTER COLUMN game_date SET NOT NULL;
 ALTER TABLE games ALTER COLUMN start_time_local SET NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_games_game_date ON games(game_date);
-

@@ -81,6 +81,7 @@ func (s *KBOETLService) ETLMonth(ctx context.Context, year int, month int) error
         // legacy games.stadium(not null)도 채워줌
         stadiumText := ""
         if r.Stadium != nil { stadiumText = *r.Stadium }
+        if stadiumText == "" { stadiumText = "미정" }
         if err := s.db.WithContext(ctx).Exec(
             `INSERT INTO games(game_source_id, home_team_id, away_team_id, game_date, start_time, start_time_local, status, stadium, stadium_id, created_at)
              VALUES(?,?,?,?,?,?,?,?,?, NOW())
@@ -105,8 +106,15 @@ func (s *KBOETLService) ETLMonth(ctx context.Context, year int, month int) error
 func (s *KBOETLService) lookupTeamIDByShortCode(ctx context.Context, sc string) int64 {
     if len(sc) == 0 { return 0 }
     var id int64
-    row := s.db.WithContext(ctx).Raw("SELECT id FROM teams WHERE short_code = ?", sc).Row()
-    if err := row.Scan(&id); err == nil { return id }
+    // 1) team_aliases(alias=OB/LG/LT/...) 단일 소스 사용
+    row := s.db.WithContext(ctx).Raw("SELECT team_id FROM team_aliases WHERE alias = ?", sc).Row()
+    if err := row.Scan(&id); err == nil && id != 0 { return id }
+    // 2) teams.short_code 직접 매칭
+    row = s.db.WithContext(ctx).Raw("SELECT id FROM teams WHERE short_code = ?", sc).Row()
+    if err := row.Scan(&id); err == nil && id != 0 { return id }
+    // 3) teams.name 보정 매칭
+    row = s.db.WithContext(ctx).Raw("SELECT id FROM teams WHERE name = ?", sc).Row()
+    if err := row.Scan(&id); err == nil && id != 0 { return id }
     return 0
 }
 

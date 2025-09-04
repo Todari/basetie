@@ -31,7 +31,7 @@ func (h *MetaHandler) Games(c *gin.Context) {
     if ds := c.Query("date"); ds != "" {
         if t, err := time.Parse("2006-01-02", ds); err == nil { datePtr = &t }
     }
-    games, err := h.repo.ListGames(c.Request.Context(), teamIDPtr, datePtr)
+    games, err := h.repo.ListGamesEnriched(c.Request.Context(), teamIDPtr, datePtr)
     if err != nil { c.JSON(http.StatusInternalServerError, gin.H{"error": "failed"}); return }
     c.JSON(http.StatusOK, gin.H{"games": games})
 }

@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from "react-native";
-import { CaretLeft } from "phosphor-react-native";
+import { CaretLeftIcon } from "phosphor-react-native";
 import { typography, colors } from "../../theme/design-tokens";
 
 export function AppBar({
@@ -20,7 +20,7 @@ export function AppBar({
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           {canGoBack ? (
             <Pressable onPress={onBack} hitSlop={8} accessibilityRole="button" accessibilityLabel="뒤로가기">
-              <CaretLeft size={24} color={colors.gray800} weight="bold" />
+              <CaretLeftIcon size={24} color={colors.gray800} weight="bold" />
             </Pressable>
           ) : null}
           <View>

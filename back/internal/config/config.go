@@ -18,6 +18,7 @@ type Config struct {
     KBOSyncEveryHours int
     KBOSyncSeason string
     KBOSyncMonthsAhead int
+    SeedOnBoot bool
 }
 
 func Load() (*Config, error) {
@@ -33,7 +34,8 @@ func Load() (*Config, error) {
         KBOSyncEnabled: getEnvBool("KBO_SYNC_ENABLED", false),
         KBOSyncEveryHours: getEnvInt("KBO_SYNC_EVERY_HOURS", 12),
         KBOSyncSeason: os.Getenv("KBO_SYNC_SEASON"),
-        KBOSyncMonthsAhead: getEnvInt("KBO_SYNC_MONTHS_AHEAD", 0),
+        KBOSyncMonthsAhead: getEnvInt("KBO_SYNC_MONTHS_AHEAD", 12),
+        SeedOnBoot: getEnvBool("SEED_ON_BOOT", true),
     }
     if cfg.DatabaseURL == "" {
         return nil, fmt.Errorf("DATABASE_URL is required")

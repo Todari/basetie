@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -19,6 +20,7 @@ import (
 	"github.com/Todari/basetie/internal/mw"
 	"github.com/Todari/basetie/internal/repo"
 	"github.com/Todari/basetie/internal/services"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -40,6 +42,13 @@ func main() {
         logg.Fatal("db connect failed", logger.Error(err))
     }
     defer sqlDB.Close()
+
+    // Seed on boot (teams, stadiums, aliases) if enabled and empty
+    if cfg.SeedOnBoot {
+        if err := seedMetaIfEmpty(gormDB); err != nil {
+            logg.Error("seed on boot failed", logger.Error(err))
+        }
+    }
 
     router := gin.New()
     router.Use(gin.Recovery())
@@ -139,6 +148,53 @@ func main() {
     }
 
     _ = gormDB
+}
+
+// seedMetaIfEmpty seeds teams, stadiums and team_aliases when empty, using bundled JSON
+func seedMetaIfEmpty(gormDB *gorm.DB) error {
+    type jsonSeed struct {
+        Teams []struct{ Name string `json:"name"`; ShortCode string `json:"short_code"` } `json:"teams"`
+        Stadiums []struct{ Name string `json:"name"`; City string `json:"city"`; Aliases []string `json:"aliases"` } `json:"stadiums"`
+        TeamAliases []struct{ TeamShortCode string `json:"team_short_code"`; Alias string `json:"alias"` } `json:"team_aliases"`
+    }
+    // Always attempt idempotent upsert on boot (ON CONFLICT DO NOTHING)
+    // read bundled seed
+    var b []byte
+    // Prefer docker image path
+    if data, e := os.ReadFile("/app/seed/kbo_seed.json"); e == nil {
+        b = data
+    } else if data, e2 := os.ReadFile("internal/tools/seed/kbo_seed.json"); e2 == nil {
+        b = data
+    } else {
+        return e
+    }
+    var s jsonSeed
+    if err := json.Unmarshal(b, &s); err != nil { return err }
+    return gormDB.Transaction(func(tx *gorm.DB) error {
+        // create teams
+        for _, t := range s.Teams {
+            if t.Name == "" || t.ShortCode == "" { continue }
+            if err := tx.Exec("INSERT INTO teams(name, short_code) VALUES(?,?) ON CONFLICT DO NOTHING", t.Name, t.ShortCode).Error; err != nil { return err }
+        }
+        // create stadiums
+        for _, st := range s.Stadiums {
+            if st.Name == "" { continue }
+            aliases, _ := json.Marshal(st.Aliases)
+            if err := tx.Exec("INSERT INTO stadiums(name, city, alias_json) VALUES(?,?,?) ON CONFLICT DO NOTHING", st.Name, st.City, aliases).Error; err != nil { return err }
+        }
+        // create team_aliases
+        type team struct{ ID int64; ShortCode string }
+        var list []team
+        if err := tx.Raw("SELECT id, short_code FROM teams").Scan(&list).Error; err != nil { return err }
+        scToID := map[string]int64{}
+        for _, t := range list { scToID[t.ShortCode] = t.ID }
+        for _, a := range s.TeamAliases {
+            id := scToID[a.TeamShortCode]
+            if id == 0 || a.Alias == "" { continue }
+            if err := tx.Exec("INSERT INTO team_aliases(team_id, alias) VALUES(?,?) ON CONFLICT DO NOTHING", id, a.Alias).Error; err != nil { return err }
+        }
+        return nil
+    })
 }
 
 

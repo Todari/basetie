@@ -2,7 +2,7 @@
   "teams": [
     {
       "name": "두산 베어스",
-      "short_code": "두산"
+      "short_code": "DO"
     },
     {
       "name": "LG 트윈스",
@@ -10,27 +10,27 @@
     },
     {
       "name": "롯데 자이언츠",
-      "short_code": "롯데"
+      "short_code": "LT"
     },
     {
       "name": "SSG 랜더스",
-      "short_code": "SSG"
+      "short_code": "SK"
     },
     {
       "name": "키움 히어로즈",
-      "short_code": "키움"
+      "short_code": "WO"
     },
     {
       "name": "한화 이글스",
-      "short_code": "한화"
+      "short_code": "HH"
     },
     {
       "name": "KIA 타이거즈",
-      "short_code": "KIA"
+      "short_code": "HT"
     },
     {
       "name": "삼성 라이온즈",
-      "short_code": "삼성"
+      "short_code": "SS"
     },
     {
       "name": "NC 다이노스",
@@ -148,7 +148,7 @@
   ],
   "team_aliases": [
     {
-      "team_short_code": "두산",
+      "team_short_code": "DO",
       "alias": "두산"
     },
     {
@@ -156,27 +156,27 @@
       "alias": "LG"
     },
     {
-      "team_short_code": "롯데",
+      "team_short_code": "LT",
       "alias": "롯데"
     },
     {
-      "team_short_code": "SSG",
+      "team_short_code": "SK",
       "alias": "SSG"
     },
     {
-      "team_short_code": "키움",
+      "team_short_code": "WO",
       "alias": "키움"
     },
     {
-      "team_short_code": "한화",
+      "team_short_code": "HH",
       "alias": "한화"
     },
     {
-      "team_short_code": "KIA",
+      "team_short_code": "HT",
       "alias": "KIA"
     },
     {
-      "team_short_code": "삼성",
+      "team_short_code": "SS",
       "alias": "삼성"
     },
     {

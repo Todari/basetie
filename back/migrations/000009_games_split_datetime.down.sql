@@ -1,0 +1,3 @@
+ALTER TABLE games DROP COLUMN IF EXISTS start_time_local;
+ALTER TABLE games DROP COLUMN IF EXISTS game_date;
+

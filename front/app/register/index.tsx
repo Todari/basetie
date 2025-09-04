@@ -58,7 +58,7 @@ export default function RegisterTab() {
           contentContainerStyle={{ paddingTop: (wheelHeight - itemHeight) / 2, paddingBottom: (wheelHeight - itemHeight) / 2 }}
           renderItem={({ item }) => (
             <View style={{ height: itemHeight, alignItems: "center", justifyContent: "center" }}>
-              <Text style={{ fontSize: 18, fontWeight: item === value ? "800" : "400", color: item === value ? colors.primary800 : "#111827" }}>
+              <Text variant="body" color={item === value ? "primary" : "secondary"} weight={item === value ? "bold" : "normal"}>
                 {String(item).padStart(2, "0")}
               </Text>
             </View>
@@ -84,7 +84,7 @@ export default function RegisterTab() {
       <View style={{ padding: 16, gap: 12, flex: 1 }}>
         <View style={{ paddingHorizontal: 8 }}>
           <Text variant="display">경기 날짜를 선택해 주세요</Text>
-          <Text style={{ marginTop: 8, color: "#667085" }}>{date}</Text>
+          <Text style={{ marginTop: 8, color: colors.gray500 }}>{date}</Text>
         </View>
 
         <View style={{ flexDirection: "row", marginTop: 12, flex: 1, marginHorizontal: "auto" }}>

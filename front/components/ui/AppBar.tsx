@@ -16,7 +16,7 @@ export function AppBar({
   right?: React.ReactNode;
 }) {
   return (
-      <View style={{ paddingHorizontal: 24, paddingVertical: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+      <View style={{ paddingHorizontal: 24, paddingVertical: 4, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           {canGoBack ? (
             <Pressable onPress={onBack} hitSlop={8} accessibilityRole="button" accessibilityLabel="뒤로가기">

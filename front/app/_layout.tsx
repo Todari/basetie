@@ -10,6 +10,7 @@ export default function Layout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="listing/[id]" />
+        <Stack.Screen name="register" />
         <Stack.Screen name="auth" />
       </Stack>
     </QueryClientProvider>

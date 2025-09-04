@@ -3,7 +3,7 @@ import { Text as RNText, TextProps as RNTextProps } from "react-native";
 import { colors, typography } from "../../theme/design-tokens";
 
 export type TextVariant = "display" | "title" | "body" | "caption";
-export type TextColor = "default" | "primary" | "secondary" | "inherit";
+export type TextColor = "default" | "primary" | "secondary" | "white" | "inherit";
 
 export type AppTextProps = RNTextProps & {
   variant?: TextVariant;
@@ -27,6 +27,8 @@ export function Text({
       ? colors.gray600
       : color === "inherit"
       ? undefined
+      : color === "white"
+      ? colors.white
       : colors.gray800;
 
   return (

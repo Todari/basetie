@@ -19,7 +19,7 @@ type Props = {
 export function Button({ title, onPress, style, variant = "primary", size = "md", fullWidth, loading, glass }: Props) {
   const height = sizes[size];
   const stylesByVariant: Record<Variant, ViewStyle> = {
-    primary: { backgroundColor: colors.primary800, borderWidth: 0 },
+    primary: { backgroundColor: colors.primary800, borderWidth: 0, },
     secondary: { backgroundColor: colors.gray700, borderWidth: 0 },
     ghost: { backgroundColor: "transparent", borderWidth: 0 },
     outline: { backgroundColor: "transparent", borderWidth: 1, borderColor: colors.primary800 },
@@ -45,9 +45,9 @@ export function Button({ title, onPress, style, variant = "primary", size = "md"
       ]}
     >
       <Text
-        variant="body"
-        weight="semibold"
-        color={isGlass ? "primary" : variant === "primary" || variant === "secondary" ? "inherit" : "primary"}
+        variant={size === "lg" ? "title" : "body"}
+        weight="bold"
+        color={isGlass ? "primary" : variant === "primary" ? "white" : variant === "secondary" ? "inherit" : "primary"}
       >
         {title}
       </Text>

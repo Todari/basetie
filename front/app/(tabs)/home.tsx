@@ -1,10 +1,11 @@
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity } from "react-native";
+import { SafeAreaView, View, Text, FlatList, TouchableOpacity, Pressable } from "react-native";
 import { Card } from "../../components/ui/Card";
 import { router } from "expo-router";
 import { AppBar } from "../../components/ui/AppBar";
 import { SearchBar } from "../../components/ui/SearchBar";
 import { Section } from "../../components/ui/Section";
 import { PillTabs } from "../../components/ui/PillTabs";
+import { colors } from "../../theme/design-tokens";
 
 const MOCK = [
   { id: 1, game: "LG vs DOO", time: "2025-09-01 18:30", teamId: 1, seat: "S석 105열 12", price: 30000 },
@@ -14,8 +15,8 @@ const MOCK = [
 export default function HomeTab() {
   return (
     <SafeAreaView>
-      <AppBar title="배스티" />
-      <View style={{ padding: 16, gap: 12 }}>
+      {/* <AppBar title="배스티" /> */}
+      <View style={{ padding: 16, gap: 12, height: "100%" }}>
         <SearchBar placeholder="팀, 날짜, 구장 검색" />
         {/* <PillTabs items={["하루 특가", "셀러 특가", "할인 기획전"]} value={"하루 특가"} onChange={() => {}} /> */}
         <Section title="양도 중인 티켓">
@@ -38,6 +39,13 @@ export default function HomeTab() {
             </TouchableOpacity>
           )}
         />
+        {/* Floating Button */}
+        <Pressable
+          onPress={() => router.push("/register")}
+          style={{ position: "absolute", right: 16, bottom: 24, backgroundColor: colors.primary800, paddingVertical: 12, paddingHorizontal: 12, borderRadius: 24, shadowColor: "#000", shadowOpacity: 0.2, shadowOffset: { width: 0, height: 8 }, shadowRadius: 8 }}
+        >
+          <Text style={{ color: "white", fontWeight: "700" }}>티켓 등록</Text>
+        </Pressable>
       </View>
     </SafeAreaView>
   );

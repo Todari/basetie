@@ -4556,6 +4556,7 @@ __metadata:
     expo-auth-session: "npm:~5.5.2"
     expo-blur: "npm:~13.0.2"
     expo-constants: "npm:^17.1.7"
+    expo-linear-gradient: "npm:~14.0.2"
     expo-linking: "npm:^7.1.7"
     expo-router: "npm:^3.5.14"
     expo-status-bar: "npm:^2.2.3"
@@ -6590,6 +6591,17 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 10c0/8548e46991739f42456428141b574c9d83ef77f2a79f371b5c6c1b77364759d4a993af8d40c027a904b5870d41165c99e3e4a8fea93316853819ba16fac0d692
+  languageName: node
+  linkType: hard
+
+"expo-linear-gradient@npm:~14.0.2":
+  version: 14.0.2
+  resolution: "expo-linear-gradient@npm:14.0.2"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/0c8c6af9d2f686315b67217bab3f601b260e470097399b5e86f10266e1a7ba26445993a45554da3440ed952b4efc53a4fd1a2e0d70d7f02053f81942c2a2c7f1
   languageName: node
   linkType: hard
 
@@ -11226,7 +11238,7 @@ __metadata:
   resolution: "resolve@patch:resolve@npm%3A1.7.1#optional!builtin<compat/resolve>::version=1.7.1&hash=3bafbf"
   dependencies:
     path-parse: "npm:^1.0.5"
-  checksum: 10c0/1301dba7c12cd9dab2ab4eee8518090f25bb7480db34b746a923ded472c4c0600ebb1ba9b8028ca843f7c6017ac76524355800c52b82633e53bd601ca288b4de
+  checksum: 10c0/1301dba7c12cd9dab2ab4eee8518089f25bb7480db34b746a923ded472c4c0600ebb1ba9b8028ca843f7c6017ac76524355800c52b82633e53bd601ca288b4de
   languageName: node
   linkType: hard
 

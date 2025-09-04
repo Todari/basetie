@@ -5,11 +5,13 @@ import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { useEffect } from "react";
-import { api } from "../shared/api/client";
 import { useAuth } from "../shared/store/auth";
+import { useGoogleAuth } from "../hooks/queries/useAuth";
 
 export default function AuthScreen() {
   const setTokens = useAuth((s) => s.setTokens);
+  const googleAuthMutation = useGoogleAuth();
+  
   WebBrowser.maybeCompleteAuthSession();
   const [req, res, promptAsync] = Google.useIdTokenAuthRequest({
     iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
@@ -21,14 +23,16 @@ export default function AuthScreen() {
     const run = async () => {
       if (res?.type === "success" && res.params?.id_token) {
         try {
-          const data = await api<{ access: string; refresh: string }>(`/v1/auth/oauth/google`, { method: "POST", body: { id_token: res.params.id_token } });
+          const data = await googleAuthMutation.mutateAsync({ id_token: res.params.id_token });
           setTokens(data);
           Alert.alert("로그인", "구글 로그인 성공");
-        } catch (e: any) { Alert.alert("오류", e.message); }
+        } catch (e: any) { 
+          Alert.alert("오류", e.message); 
+        }
       }
     };
     run();
-  }, [res]);
+  }, [res, googleAuthMutation, setTokens]);
 
   return (
     <SafeAreaView>

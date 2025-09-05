@@ -1,12 +1,12 @@
 import { SafeAreaView, View, Text, FlatList, TouchableOpacity, Pressable, ActivityIndicator } from "react-native";
-import { Card } from "../../components/ui/Card";
+import { Card } from "../../shared/ui/Card";
 import { router } from "expo-router";
-import { AppBar } from "../../components/ui/AppBar";
-import { SearchBar } from "../../components/ui/SearchBar";
-import { Section } from "../../components/ui/Section";
-import { PillTabs } from "../../components/ui/PillTabs";
+import { AppBar } from "../../shared/ui/AppBar";
+import { SearchBar } from "../../shared/ui/SearchBar";
+import { Section } from "../../shared/ui/Section";
+import { PillTabs } from "../../shared/ui/PillTabs";
 import { colors } from "../../theme/design-tokens";
-import { Button } from "../../components/ui/Button";
+import { Button } from "../../shared/ui/Button";
 import { useListings } from "../../hooks/queries/useListings";
 
 export default function HomeTab() {

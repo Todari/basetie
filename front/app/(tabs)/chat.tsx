@@ -1,5 +1,5 @@
 import { SafeAreaView, View, Text } from "react-native";
-import { Card } from "../../components/ui/Card";
+import { Card } from "../../shared/ui/Card";
 
 const MY_LISTINGS = [
   { id: 10, status: "listed", title: "LG vs DOO - S석" },

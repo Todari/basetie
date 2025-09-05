@@ -1,8 +1,8 @@
 import { SafeAreaView, View, Text, ViewStyle, ActivityIndicator } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { Card } from "../../components/ui/Card";
+import { Card } from "../../shared/ui/Card";
 import { colors, radii } from "../../theme/design-tokens";
-import { AppBar } from "../../components/ui/AppBar";
+import { AppBar } from "../../shared/ui/AppBar";
 import { useListing } from "../../hooks/queries/useListings";
 
 export default function ListingDetail() {

@@ -20,7 +20,9 @@ KBO 야구 티켓 팬투팬 정가 양도 플랫폼(B2C/C2C). 신고/제재 중�
 - 프론트: `docs/Architecture-Frontend.md`
 - 데이터: `docs/Data-Model.md`, `docs/State-Machines.md`
 - API 요약: `docs/API.md` (상세 `back/openapi.yaml`)
-- 개발/컨벤션: `docs/Dev-Guide.md`, `docs/Conventions.md`
+- 개발 가이드: `docs/Dev-Guide.md`
+- **코드 컨벤션**: `docs/Code-Conventions.md` ⭐
+- **리팩토링 가이드**: `docs/Refactoring-Guide.md` ⭐
 - 보안/운영: `docs/Security-Operations.md`
 - ADR: `docs/ADR/0001-oauth-first.md`
 - 환경: `docs/ENV.md`

@@ -1,10 +1,10 @@
 import { TouchableOpacity, View } from "react-native";
-import { Text } from "../../components/ui/Text";
+import { Text } from "../../shared/ui/Text";
 import { useState } from "react";
 import { CaretLeftIcon, CaretRightIcon } from "phosphor-react-native";
 import { colors } from "../../theme/design-tokens";
-import { Button } from "../../components/ui/Button";
-import { YMDDate } from ".";
+import { Button } from "../../shared/ui/Button";
+import { YMDDate } from "../../shared/types";
 import { YMDToDisplayDate } from "../../shared/utils/date";
 
 interface DateStepProps {

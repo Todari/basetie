@@ -1,6 +1,6 @@
 import { SafeAreaView, View, Text, Alert } from "react-native";
-import { Button } from "../components/ui/Button";
-import { AppBar } from "../components/ui/AppBar";
+import { Button } from "../shared/ui/Button";
+import { AppBar } from "../shared/ui/AppBar";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";

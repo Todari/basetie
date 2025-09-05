@@ -1,5 +1,5 @@
 import { SafeAreaView, View, Text, ActivityIndicator } from "react-native";
-import { Card } from "../../components/ui/Card";
+import { Card } from "../../shared/ui/Card";
 import { useAuth } from "../../shared/store/auth";
 import { useProfile } from "../../hooks/queries/useProfile";
 import { colors } from "../../theme/design-tokens";

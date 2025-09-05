@@ -1,27 +1,11 @@
 import { SafeAreaView } from "react-native";
 import { useRef, useState } from "react";
 import { router } from "expo-router";
-import { AppBar } from "../../components/ui/AppBar";
+import { AppBar } from "../../shared/ui/AppBar";
 import { colors } from "../../theme/design-tokens";
 import { DateStep } from "./DateStep";
 import { GameStep } from "./GameStep";
-
-export type GameRow = {
-  id: number;
-  game_date: string;
-  start_time_local?: string;
-  stadium: string;
-  home_team_id: number;
-  away_team_id: number;
-  home_team_name: string;
-  away_team_name: string;
-};
-
-export type YMDDate = {
-  year: number;
-  month: number;
-  day: number;
-};
+import { Game, YMDDate, TicketFormData } from "../../shared/types";
 
 
 export default function RegisterTab() {
@@ -33,8 +17,8 @@ export default function RegisterTab() {
     month: now.getMonth() + 1, 
     day: now.getDate()
   });
-  const [selectedGame, setSelectedGame] = useState<GameRow | null>(null);
-  const [form, setForm] = useState({ 
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [form, setForm] = useState<TicketFormData>({ 
     game_id: "", 
     team_id: "", 
     section: "", 

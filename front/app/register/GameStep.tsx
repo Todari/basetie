@@ -1,43 +1,25 @@
-import { ScrollView, TouchableOpacity, View, ActivityIndicator } from "react-native";
-import { Text } from "../../components/ui/Text";
-import { YMDDate, GameRow } from ".";
+import { View } from "react-native";
+import { Text } from "../../shared/ui/Text";
+import { YMDDate, Game } from "../../shared/types";
 import { colors } from "../../theme/design-tokens";
-import { Button } from "../../components/ui/Button";
-import { useGamesByDate } from "../../hooks/queries/useGamesByDate";
-import { Card } from "../../components/ui/Card";
-import { YMDToDisplayDate, YMDToQueryDate } from "../../shared/utils/date";
+import { Button } from "../../shared/ui/Button";
+import { useGameSelection, GameList } from "../../features/games";
+import { YMDToDisplayDate } from "../../shared/utils/date";
 
 interface GameStepProps {
   setStep: (step: number) => void;
   date: YMDDate;
-  selectedGame: GameRow | null;
-  setSelectedGame: (game: GameRow | null) => void;
+  selectedGame: Game | null;
+  setSelectedGame: (game: Game | null) => void;
 }
 
 export function GameStep({ setStep, date, selectedGame, setSelectedGame }: GameStepProps) {  
-  const { data: gamesData, isLoading, error } = useGamesByDate(YMDToQueryDate(date));
+  const { games, loading, error, selectGame } = useGameSelection({ date });
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color={colors.primary500} />
-        <Text style={{ marginTop: 16, color: colors.gray600 }}>경기 목록을 불러오는 중...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 16 }}>
-        <Text style={{ color: colors.danger, textAlign: "center", marginBottom: 16 }}>
-          경기 목록을 불러오는데 실패했습니다.
-        </Text>
-        <Button title="다시 시도" onPress={() => setStep(1)} />
-      </View>
-    );
-  }
-
-  const games = gamesData?.games || [];
+  const handleGameSelect = (game: Game) => {
+    selectGame(game);
+    setSelectedGame(game);
+  };
 
   return (
     <>
@@ -47,46 +29,13 @@ export function GameStep({ setStep, date, selectedGame, setSelectedGame }: GameS
           <Text style={{ marginTop: 8, color: colors.gray500 }}>{YMDToDisplayDate(date)}</Text>
         </View>
 
-        {games.length === 0 ? (
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ color: colors.gray500, textAlign: "center" }}>
-              해당 날짜에 경기가 없습니다.
-            </Text>
-          </View>
-        ) : (
-          <ScrollView style={{ flex: 1 }}>
-            {games.map((game) => (
-              <TouchableOpacity
-                key={game.id}
-                onPress={() => setSelectedGame(game)}
-                style={{ marginBottom: 12 }}
-              >
-                <Card 
-                  style={{
-                    ringWidth: selectedGame?.id === game.id ? 2 : 0,
-                    ringColor: selectedGame?.id === game.id ? colors.primary500 : colors.gray200,
-                    backgroundColor: selectedGame?.id === game.id ? colors.primary50 : colors.gray50,
-                    
-                  }}
-                >
-                  <View style={{ gap: 8 }}>
-                    <Text variant="title" style={{ textAlign: "center" }}>
-                      {game.home_team_name} vs {game.away_team_name}
-                    </Text>
-                    {game.start_time_local && (
-                      <Text style={{ textAlign: "center", color: colors.gray600 }}>
-                        {game.start_time_local}
-                      </Text>
-                    )}
-                    <Text style={{ textAlign: "center", color: colors.gray600 }}>
-                      {game.stadium}
-                    </Text>
-                  </View>
-                </Card>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        )}
+        <GameList
+          games={games}
+          selectedGame={selectedGame}
+          onGameSelect={handleGameSelect}
+          loading={loading}
+          error={error}
+        />
       </View>
       
       <View style={{ 

@@ -3,7 +3,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { useGamesByDate } from './queries/useGamesByDate';
+import { useGamesByDate } from '../queries/useGamesByDate';
 import { YMDToQueryDate } from '../utils/date';
 import { Game, YMDDate } from '../types';
 

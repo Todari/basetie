@@ -2,6 +2,8 @@
  * 게임 관련 타입 정의
  */
 
+import { YMDDate } from "./common.types";
+
 export type GameStatus = 'scheduled' | 'ongoing' | 'completed' | 'cancelled';
 
 export interface Game {

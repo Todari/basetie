@@ -16,9 +16,10 @@ export function GameCard({
   variant = 'default' 
 }: GameCardProps) {
   const cardStyle = {
-    borderWidth: isSelected ? 2 : 1,
+    borderWidth: 2,
     borderColor: isSelected ? colors.primary500 : colors.gray200,
-    backgroundColor: isSelected ? colors.primary50 : colors.gray50,
+    borderRadius: 24,
+    backgroundColor: isSelected ? colors.primary50 : colors.white,
   };
 
   const isCompact = variant === 'compact';

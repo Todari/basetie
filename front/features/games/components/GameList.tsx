@@ -55,7 +55,7 @@ export function GameList({
   return (
     <ScrollView style={{ flex: 1 }}>
       {games.map((game) => (
-        <View key={game.id} style={{ marginBottom: 12 }}>
+        <View key={game.id} style={{ marginBottom: 16 }}>
           <GameCard
             game={game}
             isSelected={selectedGame?.id === game.id}

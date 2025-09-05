@@ -20,7 +20,7 @@ export function Button({ title, onPress, style, variant = "primary", size = "md"
   const height = sizes[size];
   const stylesByVariant: Record<Variant, ViewStyle> = {
     primary: { backgroundColor: colors.primary800, borderWidth: 0, },
-    secondary: { backgroundColor: colors.gray700, borderWidth: 0 },
+    secondary: { backgroundColor: colors.gray200, borderWidth: 0 },
     ghost: { backgroundColor: "transparent", borderWidth: 0 },
     outline: { backgroundColor: "transparent", borderWidth: 1, borderColor: colors.primary800 },
   } as const;

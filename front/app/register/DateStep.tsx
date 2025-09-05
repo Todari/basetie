@@ -33,12 +33,16 @@ export function DateStep({ setStep, setDate, date }: DateStepProps) {
             <TouchableOpacity
               onPress={() => {
                 const prev = new Date(calYear, calMonth - 2, 1);
-                const min = new Date(year, month - 1, 1);
-                if (prev < min) return;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (prev < today) return;
                 setCalYear(prev.getFullYear());
                 setCalMonth(prev.getMonth() + 1);
               }}
-              style={{ padding: 8, opacity: (new Date(calYear, calMonth - 2, 1) < new Date(year, month - 1, 1)) ? 0.3 : 1 }}
+              style={{ 
+                padding: 8, 
+                opacity: (new Date(calYear, calMonth - 2, 1) < new Date()) ? 0.3 : 1 
+              }}
             >
               <CaretLeftIcon size={16} color={colors.gray800} weight="bold" />
             </TouchableOpacity>
@@ -70,7 +74,9 @@ export function DateStep({ setStep, setDate, date }: DateStepProps) {
               for (let i=0;i<offset;i++) cells.push({ label: "", selectable: false, y: calYear, m: calMonth, d: 0 });
               for (let d=1; d<=lastDay; d++) {
                 const cellDate = new Date(calYear, calMonth-1, d);
-                const selectable = cellDate >= new Date(year, month-1, day);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const selectable = cellDate >= today;
                 cells.push({ label: String(d), selectable, y: calYear, m: calMonth, d });
               }
               return cells.map((c, idx) => (

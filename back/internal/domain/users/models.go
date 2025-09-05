@@ -9,6 +9,7 @@ type User struct {
     Phone        *string
     Status       string    `gorm:"not null;default:active"`
     CreatedAt    time.Time `gorm:"autoCreateTime"`
+    UpdatedAt    time.Time `gorm:"autoUpdateTime"`
 }
 
 type Profile struct {

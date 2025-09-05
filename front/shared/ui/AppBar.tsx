@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, Pressable } from "react-native";
 import { CaretLeftIcon } from "phosphor-react-native";
 import { typography, colors } from "../../theme/design-tokens";

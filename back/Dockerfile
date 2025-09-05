@@ -13,8 +13,8 @@ FROM gcr.io/distroless/base-debian12
 WORKDIR /app
 COPY --from=builder /app/server /app/server
 COPY internal/tools/seed/kbo_seed.json /app/seed/kbo_seed.json
-ENV PORT=8080
-EXPOSE 8080
+ENV PORT=8090
+EXPOSE 8090
 USER 65532:65532
 ENTRYPOINT ["/app/server"]
 

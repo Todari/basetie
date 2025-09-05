@@ -8,9 +8,19 @@ import { PillTabs } from "../../shared/ui/PillTabs";
 import { colors } from "../../theme/design-tokens";
 import { Button } from "../../shared/ui/Button";
 import { useListings } from "../../hooks/queries/useListings";
+import { useAuth } from "../../shared/contexts/AuthContext";
 
 export default function HomeTab() {
   const { data: listingsData, isLoading, error, refetch } = useListings();
+  const { isAuthenticated } = useAuth();
+
+  const handleRegisterPress = () => {
+    if (isAuthenticated) {
+      router.push("/register");
+    } else {
+      router.push("/auth");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -70,7 +80,7 @@ export default function HomeTab() {
         )}
         {/* Floating Button */}
         <Button
-          onPress={() => router.push("/register")}
+          onPress={handleRegisterPress}
           title="티켓 등록"
           variant="primary"
           style={{ position: "absolute", right: 16, bottom: 24, shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.2, shadowRadius: 8 }}

@@ -1,12 +1,13 @@
 import { SafeAreaView, View, Text, ActivityIndicator } from "react-native";
 import { Card } from "../../shared/ui/Card";
-import { useAuth } from "../../shared/store/auth";
+import { useAuth } from "../../shared/contexts/AuthContext";
 import { useProfile } from "../../hooks/queries/useProfile";
 import { colors } from "../../theme/design-tokens";
+import { RouteGuard } from "../../shared/components/RouteGuard";
 
 export default function ProfileTab() {
-  const access = useAuth((s) => s.access);
-  const { data: profileData, isLoading, error } = useProfile(access);
+  const { tokens } = useAuth();
+  const { data: profileData, isLoading, error } = useProfile(tokens?.access);
 
   if (isLoading) {
     return (
@@ -30,24 +31,26 @@ export default function ProfileTab() {
   const user = profileData.user;
 
   return (
-    <SafeAreaView>
-      <View style={{ padding: 16, gap: 12 }}>
-        <Card>
-          <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 12 }}>프로필</Text>
-          <Text style={{ marginBottom: 4 }}>이름: {user.name}</Text>
-          <Text style={{ marginBottom: 4 }}>이메일: {user.email}</Text>
-          {user.phone && <Text>전화번호: {user.phone}</Text>}
-        </Card>
-        <Card>
-          <Text style={{ fontSize: 18, fontWeight: "700" }}>내 등록 티켓</Text>
-          <Text style={{ color: colors.gray500, marginTop: 8 }}>등록된 티켓이 없습니다.</Text>
-        </Card>
-        <Card>
-          <Text style={{ fontSize: 18, fontWeight: "700" }}>양도 내역</Text>
-          <Text style={{ color: colors.gray500, marginTop: 8 }}>양도 내역이 없습니다.</Text>
-        </Card>
-      </View>
-    </SafeAreaView>
+    <RouteGuard requireAuth={true}>
+      <SafeAreaView>
+        <View style={{ padding: 16, gap: 12 }}>
+          <Card>
+            <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 12 }}>프로필</Text>
+            <Text style={{ marginBottom: 4 }}>이름: {user.name}</Text>
+            <Text style={{ marginBottom: 4 }}>이메일: {user.email}</Text>
+            {user.phone && <Text>전화번호: {user.phone}</Text>}
+          </Card>
+          <Card>
+            <Text style={{ fontSize: 18, fontWeight: "700" }}>내 등록 티켓</Text>
+            <Text style={{ color: colors.gray500, marginTop: 8 }}>등록된 티켓이 없습니다.</Text>
+          </Card>
+          <Card>
+            <Text style={{ fontSize: 18, fontWeight: "700" }}>양도 내역</Text>
+            <Text style={{ color: colors.gray500, marginTop: 8 }}>양도 내역이 없습니다.</Text>
+          </Card>
+        </View>
+      </SafeAreaView>
+    </RouteGuard>
   );
 }
 

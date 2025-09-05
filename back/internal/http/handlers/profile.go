@@ -18,9 +18,41 @@ func NewProfileHandler(repo *repo.UserRepository) *ProfileHandler { return &Prof
 
 func (h *ProfileHandler) Me(c *gin.Context) {
     uid := c.GetInt64("user_id")
-    u, err := h.repo.GetProfile(c.Request.Context(), uid)
-    if err != nil { c.JSON(http.StatusNotFound, gin.H{"error": "profile not found"}); return }
-    c.JSON(http.StatusOK, gin.H{"user_id": uid, "profile": u})
+    
+    // 사용자 기본 정보 조회
+    user, err := h.repo.GetByID(c.Request.Context(), uid)
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+        return
+    }
+    
+    // 프로필 정보 조회 (없으면 기본값)
+    profile, err := h.repo.GetProfile(c.Request.Context(), uid)
+    if err != nil {
+        // 프로필이 없으면 기본 프로필 생성
+        profile = &users.Profile{
+            UserID:         uid,
+            Nickname:       nil,
+            FavoriteTeamID: nil,
+            Bio:            nil,
+            RatingAvg:      0,
+            RatingsCount:   0,
+        }
+    }
+    
+    c.JSON(http.StatusOK, gin.H{
+        "id": user.ID,
+        "email": user.Email,
+        "phone": user.Phone,
+        "status": user.Status,
+        "created_at": user.CreatedAt,
+        "updated_at": user.UpdatedAt,
+        "nickname": profile.Nickname,
+        "favorite_team_id": profile.FavoriteTeamID,
+        "bio": profile.Bio,
+        "rating_avg": profile.RatingAvg,
+        "ratings_count": profile.RatingsCount,
+    })
 }
 
 func (h *ProfileHandler) Patch(c *gin.Context) {

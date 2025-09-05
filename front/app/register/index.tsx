@@ -8,6 +8,7 @@ import { GameStep } from "./GameStep";
 import { DetailsStep } from "./DetailsStep";
 import { Game, YMDDate, TicketFormData } from "../../shared/types";
 import { useCreateListing } from "../../hooks/queries/useCreateListing";
+import { RouteGuard } from "../../shared/components/RouteGuard";
 
 
 export default function RegisterTab() {
@@ -78,29 +79,31 @@ export default function RegisterTab() {
   };
   
   return (
-    <SafeAreaView style={{ backgroundColor: colors.white, height: "100%" }}>
-      <AppBar canGoBack={router.canGoBack()} onBack={() => router.back()} title="" />
-      {step === 1 && <DateStep setDate={setDate} date={date} setStep={setStep} />}
-      {step === 2 && (
-        <GameStep 
-          date={date} 
-          setStep={setStep} 
-          selectedGame={selectedGame}
-          setSelectedGame={setSelectedGame}
-        />
-      )}
-      {step === 3 && (
-        <DetailsStep
-          date={date}
-          setStep={setStep}
-          selectedGame={selectedGame}
-          form={form}
-          setForm={setForm}
-          onSubmit={handleSubmit}
-          isSubmitting={createListingMutation.isPending}
-        />
-      )}
-    </SafeAreaView>
+    <RouteGuard requireAuth={true}>
+      <SafeAreaView style={{ backgroundColor: colors.white, height: "100%" }}>
+        <AppBar canGoBack={router.canGoBack()} onBack={() => router.back()} title="" />
+        {step === 1 && <DateStep setDate={setDate} date={date} setStep={setStep} />}
+        {step === 2 && (
+          <GameStep 
+            date={date} 
+            setStep={setStep} 
+            selectedGame={selectedGame}
+            setSelectedGame={setSelectedGame}
+          />
+        )}
+        {step === 3 && (
+          <DetailsStep
+            date={date}
+            setStep={setStep}
+            selectedGame={selectedGame}
+            form={form}
+            setForm={setForm}
+            onSubmit={handleSubmit}
+            isSubmitting={createListingMutation.isPending}
+          />
+        )}
+      </SafeAreaView>
+    </RouteGuard>
   );
 }
 

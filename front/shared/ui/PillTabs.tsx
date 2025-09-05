@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, TouchableOpacity, ScrollView } from "react-native";
 import { colors, radii, space } from "../../theme/design-tokens";
 import { Text } from "./Text";

@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../shared/api/client";
 import { CreateTicketRequest } from "../../shared/types";
 import { QUERY_KEYS } from "../../shared/constants";
+import { useAuth } from "../../shared/contexts/AuthContext";
 
 interface CreateListingResponse {
   listing: {
@@ -25,15 +26,18 @@ interface CreateListingResponse {
 
 export function useCreateListing() {
   const queryClient = useQueryClient();
+  const { tokens } = useAuth();
 
   return useMutation({
     mutationFn: async (data: CreateTicketRequest): Promise<CreateListingResponse> => {
+      if (!tokens?.access) {
+        throw new Error("로그인이 필요합니다.");
+      }
+      
       return api<CreateListingResponse>('/v1/listings', {
         method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        token: tokens.access,
+        body: data,
       });
     },
     onSuccess: () => {

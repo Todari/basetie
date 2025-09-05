@@ -30,6 +30,14 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*users.U
     return &u, nil
 }
 
+func (r *UserRepository) GetByID(ctx context.Context, userID int64) (*users.User, error) {
+    var u users.User
+    if err := r.db.WithContext(ctx).First(&u, userID).Error; err != nil {
+        return nil, err
+    }
+    return &u, nil
+}
+
 func (r *UserRepository) GetProfile(ctx context.Context, userID int64) (*users.Profile, error) {
     var p users.Profile
     if err := r.db.WithContext(ctx).Where("user_id = ?", userID).First(&p).Error; err != nil {

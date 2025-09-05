@@ -1,3 +1,8 @@
+/**
+ * @deprecated Use AuthContext instead
+ * This file is kept for backward compatibility during migration
+ */
+
 import { create } from "zustand";
 
 type AuthState = {
@@ -7,11 +12,14 @@ type AuthState = {
   clear: () => void;
 };
 
-export const useAuth = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   access: undefined,
   refresh: undefined,
   setTokens: (t) => set(t),
   clear: () => set({ access: undefined, refresh: undefined }),
 }));
+
+// Backward compatibility
+export const useAuth = useAuthStore;
 
 

@@ -10,7 +10,18 @@
       "android"
     ],
     "ios": {
-      "bundleIdentifier": "com.todari.basetie"
+      "bundleIdentifier": "com.todari.basetie",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6fbe6be8-e63c-40f1-8a70-14706c3f4099"
+      }
+    },
+    "android": {
+      "package": "com.todari.basetie"
     }
   }
 }

@@ -2,6 +2,7 @@ package dtos
 
 type OAuthRequest struct {
     IDToken string `json:"id_token" binding:"required"`
+    Provider string `json:"provider" binding:"required"` // "google", "apple", "kakao"
 }
 
 type RefreshRequest struct {

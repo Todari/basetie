@@ -3,6 +3,7 @@
  */
 
 export const API_ENDPOINTS = {
+  BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8090',
   GAMES: '/v1/games',
   TICKETS: '/v1/tickets',
   AUTH: '/v1/auth',
@@ -23,4 +24,6 @@ export const QUERY_KEYS = {
   TICKETS: 'tickets',
   TEAMS: 'teams',
   PROFILE: 'profile',
+  ME: 'me',
+  LISTINGS: 'listings',
 } as const;

@@ -5,41 +5,49 @@ info:
   description: |
     Basetie v1 API 스펙 (MVP)
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8090
 paths:
   /healthz:
-  /v1/auth/oauth/google:
-    post:
-      summary: Google OAuth login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id_token:
-                  type: string
-              required: [id_token]
+  /v1/auth/oauth/google/url:
+    get:
+      summary: Get Google OAuth URL
+      responses:
+        '200':
+          description: Google OAuth URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auth_url:
+                    type: string
+                    example: "https://accounts.google.com/oauth/authorize?client_id=..."
+  /v1/auth/oauth/google/callback:
+    get:
+      summary: Google OAuth callback
+      parameters:
+        - in: query
+          name: code
+          required: true
+          schema:
+            type: string
+          description: Authorization code from Google
       responses:
         '200':
           description: JWT issued
-  /v1/auth/oauth/apple:
-    post:
-      summary: Apple OAuth login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id_token:
-                  type: string
-              required: [id_token]
-      responses:
-        '200':
-          description: JWT issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access:
+                    type: string
+                  refresh:
+                    type: string
+                  user_id:
+                    type: integer
+                  success:
+                    type: boolean
   /v1/auth/refresh:
     post:
       summary: Refresh token

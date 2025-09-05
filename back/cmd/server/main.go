@@ -97,8 +97,8 @@ func main() {
 
     v1 := router.Group("/v1")
     {
-        v1.POST("/auth/oauth/google", authHandler.OAuthGoogle)
-        v1.POST("/auth/oauth/apple", authHandler.OAuthApple)
+        v1.GET("/auth/oauth/google/url", authHandler.OAuthGoogleURL)
+        v1.GET("/auth/oauth/google/callback", authHandler.OAuthGoogleCallback)
         v1.POST("/auth/refresh", authHandler.Refresh)
 
         v1.GET("/me", mw.RequireAuth(cfg), profileHandler.Me)

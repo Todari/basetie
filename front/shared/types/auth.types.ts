@@ -5,10 +5,15 @@
 export interface UserProfile {
   id: number;
   email: string;
-  name: string;
   phone?: string;
+  status: string;
   created_at: string;
   updated_at: string;
+  nickname?: string;
+  favorite_team_id?: number;
+  bio?: string;
+  rating_avg: number;
+  ratings_count: number;
 }
 
 export interface AuthTokens {

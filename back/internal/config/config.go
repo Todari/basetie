@@ -11,8 +11,9 @@ type Config struct {
     JWTSecret   string
     AccessTokenTTLMinutes  int
     RefreshTokenTTLMinutes int
-    GoogleClientID string
-    AppleBundleID  string
+    GoogleClientID     string
+    GoogleClientSecret string
+    AppleBundleID      string
     MonthlyListingLimit int
     KBOSyncEnabled bool
     KBOSyncEveryHours int
@@ -23,13 +24,14 @@ type Config struct {
 
 func Load() (*Config, error) {
     cfg := &Config{
-        Port:        getEnv("PORT", "8080"),
+        Port:        getEnv("PORT", "8090"),
         DatabaseURL: os.Getenv("DATABASE_URL"),
         JWTSecret:   os.Getenv("JWT_SECRET"),
         AccessTokenTTLMinutes:  getEnvInt("ACCESS_TOKEN_TTL_MINUTES", 15),
         RefreshTokenTTLMinutes: getEnvInt("REFRESH_TOKEN_TTL_MINUTES", 43200), // 30 days
-        GoogleClientID: os.Getenv("GOOGLE_CLIENT_ID"),
-        AppleBundleID:  os.Getenv("APPLE_BUNDLE_ID"),
+        GoogleClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
+        GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+        AppleBundleID:      os.Getenv("APPLE_BUNDLE_ID"),
         MonthlyListingLimit: getEnvInt("MONTHLY_LISTING_LIMIT", 8),
         KBOSyncEnabled: getEnvBool("KBO_SYNC_ENABLED", false),
         KBOSyncEveryHours: getEnvInt("KBO_SYNC_EVERY_HOURS", 12),
